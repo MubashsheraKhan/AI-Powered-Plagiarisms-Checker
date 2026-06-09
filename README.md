@@ -22,4 +22,4 @@ The core engine behind this application eliminates command line requirements, us
 * `README.md`: Explanatory architecture blueprint documentation.
 
 ## 📸 Project Screenshot
-* ![AI-Powered Plagiarism Checker](Project Screenshot.png)
+* ![App Screenshot](ProjectScreenshot.png)
