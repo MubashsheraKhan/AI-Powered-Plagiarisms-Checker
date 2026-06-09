@@ -3,7 +3,7 @@
 A modern Machine Learning web application that analyzes structural and contextual similarities between documents using Natural Language Processing (NLP). This system transforms raw text datasets into numerical vectors to evaluate precise linguistic overlaps.
 
 ## 🚀 Live Demo
-🔗 **[Live Link to App](https://ai-powered-plagiarisms-checker-etlrpwejvbcn3bqlpszpw6.streamlit.app/)** *(Update this after completing Step 4)*
+🔗 **[Live Link to App](https://ai-powered-plagiarisms-checker-etlrpwejvbcn3bqlpszpw6.streamlit.app/)** 
 
 ## 🧠 Core Machine Learning Mechanics
 The core engine behind this application eliminates command line requirements, using standard text analysis matrices:
@@ -20,3 +20,6 @@ The core engine behind this application eliminates command line requirements, us
 * `app.py`: Streamlit responsive dashboard wrapper holding NLP modeling formulas.
 * `requirements.txt`: Environment package dependencies.
 * `README.md`: Explanatory architecture blueprint documentation.
+
+## 📸 Project Screenshot
+* ![AI-Powered Plagiarism Checker](Project Screenshot.png)
