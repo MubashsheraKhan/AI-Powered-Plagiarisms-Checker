@@ -11,7 +11,6 @@ def fetch_web_references(query_text, api_key):
     Queries the live web via Tavily API using context keywords,
     extracting text body snippets from live websites.
     """
-    # Defensive fall-back: If no API key is set, prevent network crash
     if not api_key:
         return []
         
@@ -27,7 +26,6 @@ def fetch_web_references(query_text, api_key):
         response = requests.post(url, json=payload, timeout=10)
         if response.status_code == 200:
             results = response.json().get("results", [])
-            # Extract out the web page text bodies alongside their URLs
             return [(item.get("content", ""), item.get("url", "")) for item in results]
     except Exception:
         pass
@@ -44,7 +42,6 @@ def calculate_internet_plagiarism(user_text, api_key):
     if not user_text.strip():
         return 0.0, ""
 
-    # Call search engine function to look up text context live on the internet
     web_sources = fetch_web_references(user_text, api_key)
     
     if not web_sources:
@@ -53,24 +50,18 @@ def calculate_internet_plagiarism(user_text, api_key):
     highest_match = 0.0
     matched_url = ""
 
-    # Loop through scraped text blocks returned from live URLs
     for web_content, url in web_sources:
         if not web_content.strip():
             continue
             
-        # Combine user text and current web document into a comparison token pair
         corpus = [user_text, web_content]
         vectorizer = TfidfVectorizer(stop_words='english')
         
         try:
-            # Transform strings into high-dimensional TF-IDF vectors
             tfidf_matrix = vectorizer.fit_transform(corpus)
-            
-            # Execute math calculation checking the directional angle between both vectors
             similarity_matrix = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])
             match_score = similarity_matrix[0][0] * 100
             
-            # Record the highest overlapping match found on the web
             if match_score > highest_match:
                 highest_match = match_score
                 matched_url = url
@@ -99,9 +90,12 @@ st.title("🌐 Live Internet Plagiarism Detector")
 st.caption("Scan the entire internet in real-time. This app extracts underlying contextual signals and maps them against live web results via TF-IDF Vector Spaces.")
 st.markdown("---")
 
-# Retrieve the API token securely from Streamlit Sidebar or config
-st.sidebar.subheader("Configuration Panel")
-api_key_input = st.sidebar.text_input("Enter Tavily API Key:", type="password", help="Get a free key from tavily.com")
+# AUTOMATIC API KEY RETRIEVAL FROM STREAMLIT SECRETS SHIELD
+# This avoids manual entry completely and hides your secret key safely from public GitHub view.
+try:
+    TAVILY_API_KEY = st.secrets["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"]
+except Exception:
+    TAVILY_API_KEY = None
 
 # Main Text Form Interface
 user_text = st.text_area("Paste your content here to check against the live web:", height=280, placeholder="Start typing or paste your document...")
@@ -109,20 +103,19 @@ user_text = st.text_area("Paste your content here to check against the live web:
 st.markdown("<br>", unsafe_allow_html=True)
 
 if st.button("Scan Entire Web"):
-    if not api_key_input.strip():
-        st.error("🔑 Access Denied: Please provide your free Tavily API Key in the sidebar panel to enable internet scanning.")
+    if not TAVILY_API_KEY:
+        st.error("🔑 Environment Key Missing: Please configure your TAVILY_API_KEY inside the Streamlit Cloud Settings panel.")
     elif user_text.strip() == "":
         st.warning("⚠️ Submission empty. Paste text into the box above before initializing a live scan request.")
     else:
         with st.spinner("Broadcasting queries to search index matrices and computing similarity overlap..."):
             
-            # Execute internet validation routine
-            score, source_link = calculate_internet_plagiarism(user_text, api_key_input)
+            # Execute internet validation routine using the automatically pulled key
+            score, source_link = calculate_internet_plagiarism(user_text, TAVILY_API_KEY)
             
             st.markdown("---")
             st.subheader("📊 Global Scan Results")
             
-            # Match scoring status display blocks
             if score > 70:
                 st.error(f"🔴 High Plagiarism Risk: **{score}%** Match across the web.")
                 st.progress(int(score))
