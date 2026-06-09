@@ -3,7 +3,7 @@
 A modern Machine Learning web application that scans text and checks for plagiarism against the live web in real time. Built entirely with Python and hosted serverless on the cloud.
 
 ## 🚀 Live Application
-🔗 **[Click Here to Open Deployed App]([YOUR_STREAMLIT_APP_URL_HERE](https://ai-powered-plagiarisms-checker-etlrpwejvbcn3bqlpszpw6.streamlit.app/))**
+🔗 **[Click Here to Open Deployed App](https://ai-powered-plagiarisms-checker-etlrpwejvbcn3bqlpszpw6.streamlit.app/)**
 
 ---
 
@@ -28,7 +28,7 @@ A modern Machine Learning web application that scans text and checks for plagiar
 * `README.md` - Technical project documentation and guide.
 
 ## 📸 Project Screenshot
-* ![App Screenshot](App_Screenshot.png)
+![App Screenshot](App_Screenshot.png)
 
 ## 👨‍💻 Author
 Mubashshera Khan 
