@@ -3,85 +3,113 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # ==========================================
-# 1. CORE MACHINE LEARNING LOGIC
+# 1. REFERENCE DATABASE (CORPUS)
 # ==========================================
-def check_plagiarism(text1, text2):
+# This acts as our local database repository. In a commercial application, 
+# this would connect to a live database or web-crawler API.
+DATABASE_CORPUS = [
+    "Artificial intelligence and machine learning are transforming the modern tech landscape through automation.",
+    "Natural Language Processing allows computers to understand, interpret, and manipulate human language structures.",
+    "To compute cosine similarity, text documents must first be transformed into numerical vectors using TF-IDF matrices.",
+    "Streamlit is an open-source Python library that makes it easy to create custom web apps for machine learning and data science.",
+    "Python is a high-level, interpreted programming language known for its clear syntax and massive ecosystem of libraries.",
+    "Data science combines statistical methods, data analysis algorithms, and technology to extract insights from structured data."
+]
+
+# ==========================================
+# 2. CORE MACHINE LEARNING DETECTION ENGINE
+# ==========================================
+def calculate_plagiarism(user_text):
     """
-    Takes two text inputs, converts them into TF-IDF vectors,
-    and returns their mutual Cosine Similarity score.
+    Compares the single user text input against the entire reference database.
+    Returns the highest matching percentage found within the corpus database.
     """
-    # Combine documents into a temporary corpus array
-    corpus = [text1, text2]
+    # Defensive check: if the input is empty or just spaces, return 0% immediately
+    if not user_text.strip():
+        return 0.0
+
+    highest_match = 0.0
     
-    # Initialize the TfidfVectorizer to eliminate meaningless common filler words ('english')
-    # and convert raw textual patterns into mathematical feature vectors.
-    vectorizer = TfidfVectorizer(stop_words='english')
-    
-    # fit_transform learns the vocabulary vocabulary dictionary and returns a term-document matrix
-    tfidf_matrix = vectorizer.fit_transform(corpus)
-    
-    # Compute the pairwise cosine similarity metric between the two generated vectors
-    similarity_matrix = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])
-    
-    # Extract the percentage value out of the similarity array matrix
-    similarity_percentage = similarity_matrix[0][0] * 100
-    return round(similarity_percentage, 2)
+    # We iterate through each document entry stored inside our local database corpus
+    for source_doc in DATABASE_CORPUS:
+        # Create a temporary list holding the user's text and the current database document
+        temp_corpus = [user_text, source_doc]
+        
+        # Initialize vectorizer to tokenize terms and strip out standard English filler words ('the', 'is', 'at')
+        vectorizer = TfidfVectorizer(stop_words='english')
+        
+        try:
+            # Transform text data arrays into mathematical TF-IDF feature matrices
+            tfidf_matrix = vectorizer.fit_transform(temp_corpus)
+            
+            # Run a dot product calculation to evaluate the Cosine Similarity metric
+            similarity_matrix = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])
+            
+            # Extract the raw float match score from the multi-dimensional array
+            match_score = similarity_matrix[0][0] * 100
+            
+            # Track and save only the highest matched value found across the database
+            if match_score > highest_match:
+                highest_match = match_score
+        except ValueError:
+            # Handles edge cases where user input contains only stop-words or unrecognizable symbols
+            pass
+            
+    return round(highest_match, 2)
 
 
 # ==========================================
-# 2. STREAMLIT UI/UX DESIGN (Web3-Inspired Aesthetic)
+# 3. INTERACTIVE RESPONSIVE DASHBOARD UI
 # ==========================================
-# Configure webpage meta settings
-st.set_page_config(page_title="AI Plagiarism Checker", page_icon="🕵️‍♂️", layout="wide")
+# Page configuration styling properties
+st.set_page_config(page_title="AI Plagiarism Detector", page_icon="🕵️‍♂️", layout="centered")
 
-# Inject Custom CSS styles to create a clean, modern card layout with interactive elements
+# Injecting Custom CSS styling properties directly into the HTML wrapper markup
 st.markdown("""
     <style>
     .main { background-color: #0f172a; color: #f8fafc; }
-    .stTextArea textarea { background-color: #1e293b !important; color: #f8fafc !important; border: 1px solid #38bdf8 !important; border-radius: 8px !important; }
-    .stButton>button { background: linear-gradient(135deg, #38bdf8 0%, #0369a1 100%) !important; color: white !important; font-weight: bold !important; border: none !important; border-radius: 8px !important; padding: 10px 24px !important; transition: transform 0.2s ease; }
-    .stButton>button:hover { transform: scale(1.02); }
+    .stTextArea textarea { background-color: #1e293b !important; color: #f8fafc !important; border: 1px solid #38bdf8 !important; border-radius: 10px !important; }
+    .stButton>button { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important; color: white !important; font-weight: bold !important; border: none !important; border-radius: 8px !important; width: 100%; padding: 12px 0px !important; transition: all 0.3s ease; }
+    .stButton>button:hover { transform: translateY(-2px); box-shadow: 0px 5px 15px rgba(99, 102, 241, 0.4); }
     </style>
 """, unsafe_allow_html=True)
 
-# Main Title Header Banner
-st.title("🕵️‍♂️ AI-Powered Plagiarism Checker")
-st.caption("An advanced Machine Learning system utilizing TF-IDF and Cosine Similarity to detect similarity metrics between documents.")
+# Application Heading Content
+st.title("🕵️‍♂️ AI-Powered Plagiarism Detector")
+st.caption("Paste your document below to analyze its mathematical and structural matching metrics against our reference database repository.")
 st.markdown("---")
 
-# Layout creation: Divide page into two distinct horizontal input panels
-col1, col2 = st.columns(2)
-
-with col1:
-    st.subheader("Document A (Original / Source)")
-    doc_a = st.text_area("Paste text or source material here:", height=300, placeholder="Type or paste text content...")
-
-with col2:
-    st.subheader("Document B (Suspected / Student Submission)")
-    doc_b = st.text_area("Paste the text you want to screen here:", height=300, placeholder="Type or paste text content...")
+# Single Unified Input Text Area Component
+user_input = st.text_area(
+    "Enter or paste your text content below:", 
+    height=250, 
+    placeholder="Type or paste your paragraphs here to check for plagiarism levels..."
+)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Trigger Assessment Calculation Process upon Button Selection
-if st.button("Analyze Documents"):
-    # Defensive programming: Ensure both components possess text records before calculations
-    if doc_a.strip() == "" or doc_b.strip() == "":
-        st.warning("⚠️ Please provide text within both input panels to initiate processing.")
+# Trigger Action processing upon button interaction click event
+if st.button("Scan Text For Plagiarism"):
+    if user_input.strip() == "":
+        st.warning("⚠️ Action required: Please paste some text content first before initiating an index scan.")
     else:
-        with st.spinner("Processing text vectors and analyzing similarity structures..."):
-            # Execute machine learning logic
-            score = check_plagiarism(doc_a, doc_b)
+        with st.spinner("Tokenizing document string matrices and performing similarity matches..."):
+            # Call the ML calculations engine
+            plagiarism_percentage = calculate_plagiarism(user_input)
             
             st.markdown("---")
-            st.subheader("📊 Analysis Report Summary")
+            st.subheader("📊 Plagiarism Risk Assessment Summary")
             
-            # Highlight results based on structural similarity risk thresholds
-            if score > 70:
-                st.error(f"🔴 High Plagiarism Risk Detected: **{score}%** Match")
-                st.progress(int(score))
-            elif 30 <= score <= 70:
-                st.warning(f"🟡 Moderate Plagiarism Risk Detected: **{score}%** Match")
-                st.progress(int(score))
+            # Render descriptive UI warnings conditionally based on mathematical risk metrics
+            if plagiarism_percentage > 70:
+                st.error(f"🔴 High Plagiarism Match Risk: **{plagiarism_percentage}%** Similarity Detected.")
+                st.progress(int(plagiarism_percentage))
+                st.markdown("> **Note:** The text shares structural alignments with materials found inside our source repository database.")
+            elif 35 <= plagiarism_percentage <= 70:
+                st.warning(f"🟡 Moderate Plagiarism Match Risk: **{plagiarism_percentage}%** Similarity Detected.")
+                st.progress(int(plagiarism_percentage))
+                st.markdown("> **Note:** Paraphrasing or matching contextual sentence fragments detected during scanning routines.")
             else:
-                st.success(f"🟢 Low/No Plagiarism Risk Detected: **{score}%** Match")
-                st.progress(max(int(score), 1))
+                st.success(f"🟢 Low/No Plagiarism Match Risk: **{plagiarism_percentage}%** Similarity Detected.")
+                st.progress(max(int(plagiarism_percentage), 1))
+                st.markdown("> **Note:** Your document shows high uniqueness metrics when indexed against our corpus references.")
