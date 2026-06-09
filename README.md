@@ -1,25 +1,34 @@
-# AI-Powered Plagiarism Checker 🕵️‍♂️
+# AI-Powered Plagiarism Detector 🌐
 
-A modern Machine Learning web application that analyzes structural and contextual similarities between documents using Natural Language Processing (NLP). This system transforms raw text datasets into numerical vectors to evaluate precise linguistic overlaps.
+A modern Machine Learning web application that scans text and checks for plagiarism against the live web in real time. Built entirely with Python and hosted serverless on the cloud.
 
-## 🚀 Live Demo
-🔗 **[Live Link to App](https://ai-powered-plagiarisms-checker-etlrpwejvbcn3bqlpszpw6.streamlit.app/)** 
+## 🚀 Live Application
+🔗 **[Click Here to Open Deployed App]([YOUR_STREAMLIT_APP_URL_HERE](https://ai-powered-plagiarisms-checker-etlrpwejvbcn3bqlpszpw6.streamlit.app/))**
 
-## 🧠 Core Machine Learning Mechanics
-The core engine behind this application eliminates command line requirements, using standard text analysis matrices:
-* **TF-IDF Vectorization:** Tokenizes raw text documents, filters out common english stop-words, and measures term frequencies weighted against inverse document frequencies.
-* **Cosine Similarity:** Measures the cosine angle between vector structures within a multidimensional vector space to calculate precise similarity independent of length.
+---
 
-## 🛠️ Technology Stack
+## 🧠 How It Works
+1. **Context Extraction:** The application processes your text input and extracts core semantic keywords.
+2. **Live Web Scanning:** It queries the internet via the **Tavily Search API** to dynamically grab matching text segments from live websites.
+3. **NLP Similarity Engine:** Converts raw text and scraped web content into numerical matrices using **TF-IDF Vectorization** and evaluates precise overlap using **Cosine Similarity** math.
+
+---
+
+## 🛠️ Tech Stack
 * **Language:** Python
-* **Machine Learning Engine:** Scikit-Learn
-* **Interface Frame:** Streamlit (UI/UX Custom CSS Layouts)
-* **Hosting Ecosystem:** Streamlit Community Cloud
+* **Machine Learning & NLP:** Scikit-Learn (`TfidfVectorizer`, `cosine_similarity`)
+* **Web UI Framework:** Streamlit (with custom CSS styling)
+* **Search Integration:** Tavily AI API
 
-## 📂 Repository File System Structure
-* `app.py`: Streamlit responsive dashboard wrapper holding NLP modeling formulas.
-* `requirements.txt`: Environment package dependencies.
-* `README.md`: Explanatory architecture blueprint documentation.
+---
+
+## 📂 Project Structure
+* `app.py` - Core machine learning logic, API integration, and web dashboard layout.
+* `requirements.txt` - Python package dependencies for the cloud server.
+* `README.md` - Technical project documentation and guide.
 
 ## 📸 Project Screenshot
-* ![App Screenshot](Project_Screenshot.png)
+* ![App Screenshot](App_Screenshot.png)
+
+## 👨‍💻 Author
+Mubashshera Khan 
